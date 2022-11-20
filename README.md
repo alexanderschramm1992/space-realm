@@ -32,6 +32,8 @@ class Raumschiff
   Raumschiff : bereise (Planet)
   Raumschiff : lade (Inventar)
   Raumschiff : entlade (Inventar)
+class Sonnensystem
+  Sonnensystem : Name
 class Planet
   Planet : Name
   Planet : Inventar
@@ -43,12 +45,15 @@ class Fabrikation
   Fabrikation : verarbeite (Inventar)
 Spieler "1" --> "1" Raumschiff : besitzt
 Raumschiff "*" --> "*" Planet : bereist
+Sonnensystem "1" --> "*" Planet : beherbergt
 Planet "1" --> "*" Fabrikation : beherbergt
 ```
 ### Spieler
 Die Entität Spieler steht stellvertretend für einen Spieler in Space Realm. Neben dem Alias des Spielers enthält sie dessen Kontostand. Ein Spieler steuert im Rahmen des MVP genau ein Raumschiff, perspektivisch jedoch viele mehr.
 ### Raumschiff
 Das Raumschiff ist zunächst die physische Manifestation des Spielers in der Welt von Space Realm. Es ermöglicht diesem verschieden Planteen zu bereisen und dort Inventar zu ent- oder beladen.
+### Sonnensystem
+In einer Sonnensystem Entität befindet sich eine beliebige Menge an Planeten und Raumschiffen. Der MVP erstreckt sich über ein einziges Sonnensystem, perspektivisch jedoch kann es beliebig viele geben. 
 ### Planet
 Die Planeten stellen in Space Realm die Lokationen dar, zwischen denen sich Raumschiffe innerhalb einer Karte bewegen können. Jeder Plante kann eine beliebige Anzahl an Fabrikationen beherbergen, die sich von dessen Inventar bedienen.
 ### Fabrikation
