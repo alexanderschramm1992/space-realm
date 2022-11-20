@@ -1,1 +1,2 @@
 # space-realm
+Space Realm ist ein Browser basiertes Wirtschafts- und Strategiespiel. Der Spieler kontrolliert ein Raumschiff, welches sich auf einer Grid-basierten Karte der Galaxis bewegt. Ziel des Spiels ist es, produktive Wirtschaftsstandorte zu finden, entwickeln, und an ein Netz seinergleichen anzubinden. Dadurch sollen profitable Produktionsketten entstehen. Diese müssen zum einen zufällig auftretenden Naturereignissen standhalten, zum anderen aber auch mit den Unternehmen anderer Spieler konkurrieren können. 
