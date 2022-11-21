@@ -1,0 +1,45 @@
+body {
+    margin: 0;
+}
+
+.background {
+    margin: 0;
+    padding: 1em;
+    width: calc(100vw - 2em);
+    height: calc(100vh - 2em);
+
+    background-image: url("images/dark_space.png");
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+
+    animation-name: background;
+    animation-duration: 120s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+.panel {
+    border: 0.1em solid #fff;
+    border-radius: 1em;
+    box-shadow: 0 0 1em #9ecaed;
+
+    padding: 0.5em;
+    margin: 1em;
+
+    background-color: rgba(51, 51, 51, 0.7);
+
+    font-family: 'Secular One';
+    color: #fff;
+    text-shadow: 0 0 0.1em #9ecaed;
+}
+
+@keyframes background {
+    0%      {background-position: top;}
+    25%     {background-position: right;}
+    50%     {background-position: bottom;}
+    75%     {background-position: left;}
+    100%    {background-position: top;}
+}
+
