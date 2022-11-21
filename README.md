@@ -29,9 +29,6 @@ class Spieler
 class Raumschiff
   Raumschiff : Name
   Raumschiff : Inventar
-  Raumschiff : bereise (Planet)
-  Raumschiff : lade (Inventar)
-  Raumschiff : entlade (Inventar)
 class Sonnensystem
   Sonnensystem : Name
 class Planet
@@ -42,7 +39,6 @@ class Fabrikation
   Fabrikation : Name
   Fabrikation : Bedarf
   Fabrikation : Produkt
-  Fabrikation : verarbeite (Inventar)
 Spieler "1" --> "1" Raumschiff : besitzt
 Raumschiff "*" --> "*" Planet : bereist
 Sonnensystem "1" --> "*" Planet : beherbergt
