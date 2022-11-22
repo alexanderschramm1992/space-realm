@@ -1,5 +1,6 @@
 body {
     margin: 0;
+    font-size: 25px;
 }
 
 .background {
@@ -20,11 +21,18 @@ body {
     animation-timing-function: ease-in-out;
 }
 
+.glow {
+    box-shadow: 0 0 1em #9ecaed;
+}
+
+.center {
+    text-align: center;
+}
+
 .panel {
     border: 0.1em solid #fff;
-    border-radius: 1em;
-    box-shadow: 0 0 1em #9ecaed;
-
+    border-radius: 1em 0.5em;
+    
     padding: 0.5em;
     margin: 1em;
 
@@ -33,6 +41,23 @@ body {
     font-family: 'Secular One';
     color: #fff;
     text-shadow: 0 0 0.1em #9ecaed;
+}
+
+input {
+    border: 0.1em solid #fff;
+    border-radius: 0.5em;
+    margin: 0.2em;
+    padding: 0.2em;
+    width: calc(100% - 1em);
+    font-size: 25px;
+}
+
+input[type=button] {
+    width: calc(100% - 0.4em);
+}
+
+input:hover {
+    box-shadow: 0 0 1em #9ecaed;
 }
 
 @keyframes background {
