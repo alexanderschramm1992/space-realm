@@ -8,6 +8,18 @@
   <script src="main.js"></script>
 </head>
 <body>
-  <script>var app = Elm.Main.init();</script>
+  <script>
+    var app = Elm.Main.init()
+
+    app.ports.sendLoginRequest.subscribe(credentials => {
+      console.log(credentials)
+      app.ports.receiveLoginResponse.send({
+        id: "690d0154-1e74-4f33-93a0-af719c4ee1e0",
+        name: "John Doe",
+        currency: 42000
+      })
+    })
+    app.ports.sendErrorMessage.subscribe(console.error)
+  </script>
 </body>
 </html>

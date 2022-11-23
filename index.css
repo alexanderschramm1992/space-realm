@@ -16,9 +16,17 @@ body {
     background-position: top;
 
     animation-name: background;
-    animation-duration: 120s;
+    animation-duration: 180s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
+}
+
+@keyframes background {
+    0%      {background-position: top;}
+    25%     {background-position: right;}
+    50%     {background-position: bottom;}
+    75%     {background-position: left;}
+    100%    {background-position: top;}
 }
 
 .glow {
@@ -54,17 +62,10 @@ input {
 
 input[type=button] {
     width: calc(100% - 0.4em);
+    cursor: pointer;
 }
 
 input:hover {
     box-shadow: 0 0 1em #9ecaed;
-}
-
-@keyframes background {
-    0%      {background-position: top;}
-    25%     {background-position: right;}
-    50%     {background-position: bottom;}
-    75%     {background-position: left;}
-    100%    {background-position: top;}
 }
 
