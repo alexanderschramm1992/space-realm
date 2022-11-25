@@ -21,6 +21,21 @@ body {
     animation-timing-function: ease-in-out;
 }
 
+.flex-box {
+    overflow: auto;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: space-around;  
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
 @keyframes background {
     0%      {background-position: top;}
     25%     {background-position: right;}
@@ -35,6 +50,23 @@ body {
 
 .center {
     text-align: center;
+}
+
+.vertical-center {
+    vertical-align: super;
+}
+
+.full {
+    width: calc(100vmax - 4.2em);
+}
+
+.half {
+    width: calc(50vmax - 4.2em);
+}
+
+.half-square {
+    width: calc(50vmax - 4.2em);
+    height: calc(50vmax - 4.2em);
 }
 
 .panel {

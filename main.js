@@ -5415,7 +5415,7 @@ var $author$project$Main$landingPageView = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('panel glow')
+				$elm$html$Html$Attributes$class('flex-box')
 			]),
 		_List_fromArray(
 			[
@@ -5423,13 +5423,50 @@ var $author$project$Main$landingPageView = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('center')
+						$elm$html$Html$Attributes$class('panel glow vertical-center')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Space Realm')
-					])),
-				$author$project$Main$loginPanel(model)
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('center')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Space Realm')
+							])),
+						$author$project$Main$loginPanel(model)
+					]))
+			]));
+};
+var $author$project$Main$solarSystemElementView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('panel glow half')
+			]),
+		_List_Nil);
+};
+var $elm$html$Html$canvas = _VirtualDom_node('canvas');
+var $author$project$Main$solarSystemMapView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('panel glow half')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$canvas,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('half-square')
+					]),
+				_List_Nil)
 			]));
 };
 var $author$project$Main$solarSystemView = function (model) {
@@ -5437,11 +5474,22 @@ var $author$project$Main$solarSystemView = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('panel glow')
+				$elm$html$Html$Attributes$class('flex-box')
 			]),
 		_List_fromArray(
 			[
-				$elm$html$Html$text('Solar System - Coming soon')
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('panel glow full')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Solar System - Coming soon')
+					])),
+				$author$project$Main$solarSystemMapView(model),
+				$author$project$Main$solarSystemElementView(model)
 			]));
 };
 var $author$project$Main$view = function (model) {

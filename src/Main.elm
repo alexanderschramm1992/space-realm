@@ -11,6 +11,7 @@ import Html exposing (br)
 import Html.Attributes exposing (value)
 import Html.Events exposing (onClick)
 import Json.Decode exposing (Decoder)
+import Html exposing (canvas)
 
 -- MAIN
 
@@ -151,13 +152,14 @@ view model =
         SolarSystemModel _ -> solarSystemView model ] ] }
 
 landingPageView: Model -> Html Msg
-landingPageView model =
-  div 
-    [ class "panel glow" ] 
+landingPageView model = div
+  [ class "flex-box" ]
+  [ div 
+    [ class "panel glow vertical-center" ] 
     [ div
       [ class "center" ]
       [ text "Space Realm" ]
-    , loginPanel model ]
+    , loginPanel model ] ]
 
 loginPanel: Model -> Html Msg
 loginPanel model = div
@@ -180,6 +182,22 @@ loginPanel model = div
 
 solarSystemView: Model -> Html Msg
 solarSystemView model =
+  div
+    [ class "flex-box" ]
+    [ div 
+      [ class "panel glow full" ] 
+      [ text "Solar System - Coming soon" ]
+    , solarSystemMapView model
+    , solarSystemElementView model ]
+
+solarSystemMapView: Model -> Html Msg
+solarSystemMapView model = 
   div 
-    [ class "panel glow" ] 
-    [ text "Solar System - Coming soon" ]
+    [ class "panel glow half" ] 
+    [ canvas [ class "half-square" ] [] ]
+
+solarSystemElementView: Model -> Html Msg
+solarSystemElementView model = 
+  div 
+    [ class "panel glow half" ] 
+    [ ]
