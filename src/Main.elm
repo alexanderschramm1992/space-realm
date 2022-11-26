@@ -263,7 +263,7 @@ solarSystemView model = case model of
 solarSystemMapView: SolarSystem -> Html Msg
 solarSystemMapView solarSystem = 
   div 
-    [ class "half-square" ] 
+    [ class "half-square map glow" ] 
     ( map planetView solarSystem.planets )
 
 planetView: Planet -> Html Msg

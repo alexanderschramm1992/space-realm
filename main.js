@@ -5609,7 +5609,7 @@ var $author$project$Main$solarSystemMapView = function (solarSystem) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('half-square')
+				$elm$html$Html$Attributes$class('half-square map glow')
 			]),
 		A2($elm$core$List$map, $author$project$Main$planetView, solarSystem.planets));
 };
