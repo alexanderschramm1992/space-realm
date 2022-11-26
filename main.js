@@ -5176,43 +5176,58 @@ var $author$project$Main$LandingPageMsg = function (a) {
 var $author$project$Main$LoginResponded = function (a) {
 	return {$: 'LoginResponded', a: a};
 };
+var $author$project$Main$SolarSystemMsg = function (a) {
+	return {$: 'SolarSystemMsg', a: a};
+};
+var $author$project$Main$SolarSystemResponded = function (a) {
+	return {$: 'SolarSystemResponded', a: a};
+};
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
 var $elm$json$Json$Decode$value = _Json_decodeValue;
 var $author$project$Main$receiveLoginResponse = _Platform_incomingPort('receiveLoginResponse', $elm$json$Json$Decode$value);
-var $author$project$Main$subscriptions = function (model) {
-	return $author$project$Main$receiveLoginResponse(
-		function (value) {
-			return $author$project$Main$LandingPageMsg(
-				$author$project$Main$LoginResponded(value));
-		});
+var $author$project$Main$receiveSolarSystemResponse = _Platform_incomingPort('receiveSolarSystemResponse', $elm$json$Json$Decode$value);
+var $author$project$Main$subscriptions = function (_v0) {
+	return $elm$core$Platform$Sub$batch(
+		_List_fromArray(
+			[
+				$author$project$Main$receiveLoginResponse(
+				A2($elm$core$Basics$composeL, $author$project$Main$LandingPageMsg, $author$project$Main$LoginResponded)),
+				$author$project$Main$receiveSolarSystemResponse(
+				A2($elm$core$Basics$composeL, $author$project$Main$SolarSystemMsg, $author$project$Main$SolarSystemResponded))
+			]));
 };
 var $author$project$Main$SolarSystemModel = function (a) {
 	return {$: 'SolarSystemModel', a: a};
 };
 var $elm$json$Json$Decode$decodeValue = _Json_run;
-var $author$project$Main$Player = F3(
-	function (id, name, currency) {
-		return {currency: currency, id: id, name: name};
+var $author$project$Main$Player = F4(
+	function (id, name, solarSystem, currency) {
+		return {currency: currency, id: id, name: name, solarSystem: solarSystem};
 	});
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $elm$json$Json$Decode$map3 = _Json_map3;
+var $elm$json$Json$Decode$map4 = _Json_map4;
 var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Main$playerDecoder = A4(
-	$elm$json$Json$Decode$map3,
+var $author$project$Main$playerDecoder = A5(
+	$elm$json$Json$Decode$map4,
 	$author$project$Main$Player,
 	A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string),
 	A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string),
 	A2($elm$json$Json$Decode$field, 'currency', $elm$json$Json$Decode$int));
-var $author$project$Main$decodePlayer = function (json) {
-	return A2($elm$json$Json$Decode$decodeValue, $author$project$Main$playerDecoder, json);
-};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$sendErrorMessage = _Platform_outgoingPort('sendErrorMessage', $elm$json$Json$Encode$string);
+var $author$project$Main$sendSolarSystemRequest = _Platform_outgoingPort('sendSolarSystemRequest', $elm$json$Json$Encode$string);
 var $author$project$Main$processLoginResponse = F2(
 	function (response, model) {
 		if (model.$ === 'LandingPageModel') {
 			var content = model.a;
-			var _v1 = $author$project$Main$decodePlayer(response);
+			var _v1 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$playerDecoder, response);
 			if (_v1.$ === 'Err') {
 				var error = _v1.a;
 				return _Utils_Tuple2(
@@ -5229,8 +5244,8 @@ var $author$project$Main$processLoginResponse = F2(
 				var player = _v1.a;
 				return _Utils_Tuple2(
 					$author$project$Main$SolarSystemModel(
-						{player: player}),
-					$elm$core$Platform$Cmd$none);
+						{error: $elm$core$Maybe$Nothing, player: player, solarSystem: $elm$core$Maybe$Nothing}),
+					$author$project$Main$sendSolarSystemRequest(player.solarSystem));
 			}
 		} else {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -5315,14 +5330,85 @@ var $author$project$Main$updateLandingPage = F2(
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Main$SolarSystem = F3(
+	function (id, name, planets) {
+		return {id: id, name: name, planets: planets};
+	});
+var $elm$json$Json$Decode$list = _Json_decodeList;
+var $elm$json$Json$Decode$map3 = _Json_map3;
+var $author$project$Main$Planet = F4(
+	function (id, name, image, position) {
+		return {id: id, image: image, name: name, position: position};
+	});
+var $author$project$Main$Coordinates = F2(
+	function (top, left) {
+		return {left: left, top: top};
+	});
+var $author$project$Main$coordinatesDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$Main$Coordinates,
+	A2($elm$json$Json$Decode$field, 'top', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'left', $elm$json$Json$Decode$int));
+var $author$project$Main$planetDecoder = A5(
+	$elm$json$Json$Decode$map4,
+	$author$project$Main$Planet,
+	A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'image', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'position', $author$project$Main$coordinatesDecoder));
+var $author$project$Main$solarSystemDecoder = A4(
+	$elm$json$Json$Decode$map3,
+	$author$project$Main$SolarSystem,
+	A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string),
+	A2(
+		$elm$json$Json$Decode$field,
+		'planets',
+		$elm$json$Json$Decode$list($author$project$Main$planetDecoder)));
+var $author$project$Main$processSolarSystemResponse = F2(
+	function (response, model) {
+		if (model.$ === 'SolarSystemModel') {
+			var content = model.a;
+			var _v1 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$solarSystemDecoder, response);
+			if (_v1.$ === 'Err') {
+				var error = _v1.a;
+				return _Utils_Tuple2(
+					$author$project$Main$SolarSystemModel(
+						_Utils_update(
+							content,
+							{
+								error: $elm$core$Maybe$Just(
+									$elm$json$Json$Decode$errorToString(error))
+							})),
+					$author$project$Main$sendErrorMessage(
+						$elm$json$Json$Decode$errorToString(error)));
+			} else {
+				var solarSystem = _v1.a;
+				return _Utils_Tuple2(
+					$author$project$Main$SolarSystemModel(
+						_Utils_update(
+							content,
+							{
+								solarSystem: $elm$core$Maybe$Just(solarSystem)
+							})),
+					$elm$core$Platform$Cmd$none);
+			}
+		} else {
+			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$Main$updateMapPage = F2(
 	function (msg, model) {
 		if (model.$ === 'SolarSystemModel') {
-			var content = model.a;
-			return _Utils_Tuple2(
-				$author$project$Main$LandingPageModel(
-					{error: $elm$core$Maybe$Nothing, password: $elm$core$Maybe$Nothing, username: $elm$core$Maybe$Nothing}),
-				$elm$core$Platform$Cmd$none);
+			if (msg.$ === 'LogoutClicked') {
+				return _Utils_Tuple2(
+					$author$project$Main$LandingPageModel(
+						{error: $elm$core$Maybe$Nothing, password: $elm$core$Maybe$Nothing, username: $elm$core$Maybe$Nothing}),
+					$elm$core$Platform$Cmd$none);
+			} else {
+				var response = msg.a;
+				return A2($author$project$Main$processSolarSystemResponse, response, model);
+			}
 		} else {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
@@ -5347,6 +5433,12 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $author$project$Main$LoginRequested = {$: 'LoginRequested'};
+var $author$project$Main$PasswordSet = function (a) {
+	return {$: 'PasswordSet', a: a};
+};
+var $author$project$Main$UsernameSet = function (a) {
+	return {$: 'UsernameSet', a: a};
+};
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
@@ -5366,6 +5458,37 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
@@ -5383,7 +5506,9 @@ var $author$project$Main$loginPanel = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$type_('text'),
-						$elm$html$Html$Attributes$placeholder('Benutzername')
+						$elm$html$Html$Attributes$placeholder('Benutzername'),
+						$elm$html$Html$Events$onInput(
+						A2($elm$core$Basics$composeL, $author$project$Main$LandingPageMsg, $author$project$Main$UsernameSet))
 					]),
 				_List_Nil),
 				A2($elm$html$Html$br, _List_Nil, _List_Nil),
@@ -5392,7 +5517,9 @@ var $author$project$Main$loginPanel = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$type_('password'),
-						$elm$html$Html$Attributes$placeholder('Passwort')
+						$elm$html$Html$Attributes$placeholder('Passwort'),
+						$elm$html$Html$Events$onInput(
+						A2($elm$core$Basics$composeL, $author$project$Main$LandingPageMsg, $author$project$Main$PasswordSet))
 					]),
 				_List_Nil),
 				A2($elm$html$Html$br, _List_Nil, _List_Nil),
@@ -5450,47 +5577,75 @@ var $author$project$Main$solarSystemElementView = function (model) {
 			]),
 		_List_Nil);
 };
-var $elm$html$Html$canvas = _VirtualDom_node('canvas');
-var $author$project$Main$solarSystemMapView = function (model) {
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $author$project$Main$planetView = function (planet) {
+	return A2(
+		$elm$html$Html$img,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('planet'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'top',
+				$elm$core$String$fromInt(planet.position.top) + 'vmax'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'left',
+				$elm$core$String$fromInt(planet.position.left) + 'vmax'),
+				$elm$html$Html$Attributes$src(planet.image)
+			]),
+		_List_Nil);
+};
+var $author$project$Main$solarSystemMapView = function (solarSystem) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('panel glow half')
+				$elm$html$Html$Attributes$class('half-square')
 			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$canvas,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('half-square')
-					]),
-				_List_Nil)
-			]));
+		A2($elm$core$List$map, $author$project$Main$planetView, solarSystem.planets));
 };
 var $author$project$Main$solarSystemView = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('flex-box')
-			]),
-		_List_fromArray(
-			[
-				A2(
+	if (model.$ === 'SolarSystemModel') {
+		var content = model.a;
+		var _v1 = content.solarSystem;
+		if (_v1.$ === 'Just') {
+			var solarSystem = _v1.a;
+			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('panel glow full')
+						$elm$html$Html$Attributes$class('flex-box')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Solar System - Coming soon')
-					])),
-				$author$project$Main$solarSystemMapView(model),
-				$author$project$Main$solarSystemElementView(model)
-			]));
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('panel glow full')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Solar System - ' + solarSystem.name)
+							])),
+						$author$project$Main$solarSystemMapView(solarSystem),
+						$author$project$Main$solarSystemElementView(solarSystem)
+					]));
+		} else {
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		}
+	} else {
+		return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+	}
 };
 var $author$project$Main$view = function (model) {
 	return {

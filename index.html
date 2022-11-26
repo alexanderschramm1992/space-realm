@@ -12,7 +12,7 @@
     var app = Elm.Main.init()
 
     app.ports.sendLoginRequest.subscribe(credentials => {
-      console.log(credentials)
+      console.log(`Requesting Player ${credentials.username}`)
       app.ports.receiveLoginResponse.send({
         id: "690d0154-1e74-4f33-93a0-af719c4ee1e0",
         name: "John Doe",
@@ -20,6 +20,21 @@
       })
     })
     app.ports.sendErrorMessage.subscribe(console.error)
+    app.ports.sendSolarSystemRequest.subscribe(id => {
+      console.log(`Requested Solar Sytsem with Id ${id}`)
+      app.ports.receiveSolarSystemResponse.send({
+        id: "cb1255d1-b98f-459a-be86-8889d5e0d197",
+        name: "Proxima Centauri",
+        planets: [
+          {
+            id: "5f099279-2512-4fef-be4d-917b302387cb",
+            name: "Vephus",
+            image: "images/Planet_01.png",
+            position: { top: 1, left: 1}
+          }
+        ]
+      })
+    })
   </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-size: 25px;
+    font-size: 2vmax;
 }
 
 .background {
@@ -89,7 +89,7 @@ input {
     margin: 0.2em;
     padding: 0.2em;
     width: calc(100% - 1em);
-    font-size: 25px;
+    font-size: 2vmax;
 }
 
 input[type=button] {
@@ -99,5 +99,21 @@ input[type=button] {
 
 input:hover {
     box-shadow: 0 0 1em #9ecaed;
+}
+
+.planet {
+    position: relative;
+    width: 8vmax;
+    height: 8vmax;
+}
+
+.planet:hover {
+    box-shadow: 0 0 1em #9ecaed;
+    border-radius: 4vmax;
+}
+
+.selected {
+    box-shadow: 0 0 1em #9ecaed;
+    border-radius: 4vmax;
 }
 

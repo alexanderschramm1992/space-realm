@@ -9,9 +9,12 @@ import Html.Attributes exposing (type_)
 import Html.Attributes exposing (placeholder)
 import Html exposing (br)
 import Html.Attributes exposing (value)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Json.Decode exposing (Decoder)
-import Html exposing (canvas)
+import List exposing (map)
+import Html.Attributes exposing (style)
+import Html exposing (img)
+import Html.Attributes exposing (src)
 
 -- MAIN
 
@@ -34,16 +37,40 @@ type Model
     , password: Maybe String
     , error: Maybe String }
   | SolarSystemModel
-    { player: Player }
+    { player: Player
+    , solarSystem: Maybe SolarSystem
+    , error: Maybe String }
 
 type alias Credentials =
   { username: Maybe String
   , password: Maybe String }
 
+type alias Id = String
+
+type alias Name = String
+
+type alias Image = String
+
+type alias Coordinates = 
+  { top: Int
+  , left: Int }
+
 type alias Player =
-  { id: String
-  , name: String
+  { id: Id
+  , name: Name
+  , solarSystem: Id
   , currency: Int }
+
+type alias SolarSystem =
+  { id: Id
+  , name: Name
+  , planets: List Planet }
+
+type alias Planet =
+  { id: Id
+  , name: Name
+  , image: Image
+  , position: Coordinates}
 
 -- MSG
 
@@ -59,17 +86,49 @@ type LandingPageMsg
 
 type SolarSystemMsg
   = LogoutClicked
+  | SolarSystemResponded Json.Decode.Value
 
 -- PORTS
 
 port sendLoginRequest: Credentials -> Cmd msg
 port receiveLoginResponse: (Json.Decode.Value -> msg) -> Sub msg
 port sendErrorMessage: String -> Cmd msg
+port sendSolarSystemRequest: Id -> Cmd msg
+port receiveSolarSystemResponse: (Json.Decode.Value -> msg) -> Sub msg
 
 -- SUBSCRIPTIONS
 
 subscriptions: Model -> Sub Msg
-subscriptions model = receiveLoginResponse (\value -> LandingPageMsg (LoginResponded value))
+subscriptions _ = Sub.batch 
+  [ receiveLoginResponse (LandingPageMsg << LoginResponded)
+  , receiveSolarSystemResponse (SolarSystemMsg << SolarSystemResponded) ]
+
+-- DECODERS
+
+coordinatesDecoder: Decoder Coordinates
+coordinatesDecoder = Json.Decode.map2 Coordinates
+  (Json.Decode.field "top" Json.Decode.int)
+  (Json.Decode.field "left" Json.Decode.int)
+
+planetDecoder: Decoder Planet
+planetDecoder = Json.Decode.map4 Planet
+  (Json.Decode.field "id" Json.Decode.string)
+  (Json.Decode.field "name" Json.Decode.string)
+  (Json.Decode.field "image" Json.Decode.string)
+  (Json.Decode.field "position" coordinatesDecoder)
+
+playerDecoder: Decoder Player
+playerDecoder = Json.Decode.map4 Player 
+  (Json.Decode.field "id" Json.Decode.string)
+  (Json.Decode.field "name" Json.Decode.string)
+  (Json.Decode.field "id" Json.Decode.string)
+  (Json.Decode.field "currency" Json.Decode.int)
+
+solarSystemDecoder: Decoder SolarSystem
+solarSystemDecoder = Json.Decode.map3 SolarSystem
+  (Json.Decode.field "id" Json.Decode.string)
+  (Json.Decode.field "name" Json.Decode.string)
+  (Json.Decode.field "planets" (Json.Decode.list planetDecoder))
 
 -- INIT
 
@@ -105,37 +164,43 @@ updateLandingPage msg model =
       LoginResponded response -> processLoginResponse response model
     _ -> (model, Cmd.none)
 
-processLoginResponse: Json.Decode.Value -> Model -> (Model, Cmd Msg)
-processLoginResponse response model = case model of
-  LandingPageModel content -> case decodePlayer response of
-    Err error -> (
-      LandingPageModel { content | error = Just (Json.Decode.errorToString error) }
-      , sendErrorMessage (Json.Decode.errorToString error))
-    Ok player -> (
-      SolarSystemModel { player = player }, 
-      Cmd.none)
-  _ -> (model, Cmd.none)
-
-playerDecoder: Decoder Player
-playerDecoder = Json.Decode.map3 Player 
-  (Json.Decode.field "id" Json.Decode.string)
-  (Json.Decode.field "name" Json.Decode.string)
-  (Json.Decode.field "currency" Json.Decode.int)
-
-decodePlayer: Json.Decode.Value -> Result Json.Decode.Error Player
-decodePlayer json = Json.Decode.decodeValue playerDecoder json 
-
 updateMapPage: SolarSystemMsg -> Model -> (Model, Cmd Msg)
 updateMapPage msg model =
   case model of
-      SolarSystemModel content -> case msg of
+      SolarSystemModel _ -> case msg of
           LogoutClicked ->
             ( LandingPageModel 
               { username = Nothing
               , password = Nothing
               , error = Nothing }
             , Cmd.none )
+          SolarSystemResponded response -> processSolarSystemResponse response model
       _ -> (model, Cmd.none)
+
+processLoginResponse: Json.Decode.Value -> Model -> (Model, Cmd Msg)
+processLoginResponse response model = case model of
+  LandingPageModel content -> case Json.Decode.decodeValue playerDecoder response of
+    Err error -> 
+      ( LandingPageModel { content | error = Just (Json.Decode.errorToString error) }
+      , sendErrorMessage (Json.Decode.errorToString error) )
+    Ok player -> 
+      ( SolarSystemModel 
+        { player = player 
+        , solarSystem = Nothing
+        , error = Nothing }
+      , sendSolarSystemRequest player.solarSystem )
+  _ -> (model, Cmd.none)
+
+processSolarSystemResponse: Json.Decode.Value -> Model -> (Model, Cmd Msg)
+processSolarSystemResponse response model = case model of
+    SolarSystemModel content -> case Json.Decode.decodeValue solarSystemDecoder response of
+        Err error -> 
+          ( SolarSystemModel { content | error = Just (Json.Decode.errorToString error) }
+          , sendErrorMessage (Json.Decode.errorToString error) )
+        Ok solarSystem ->
+          ( SolarSystemModel { content | solarSystem = Just solarSystem }
+          , Cmd.none)
+    _ -> (model, Cmd.none)
 
 -- VIEW
 
@@ -166,37 +231,50 @@ loginPanel model = div
   [ class "panel" ]
   [ input
     [ type_ "text"
-    , placeholder "Benutzername" ]
+    , placeholder "Benutzername"
+    , onInput (LandingPageMsg << UsernameSet) ]
     []
   , br [] []
   , input
     [ type_ "password" 
-    , placeholder "Passwort" ]
+    , placeholder "Passwort"
+    , onInput (LandingPageMsg << PasswordSet) ]
     []
   , br [] []
   , input
     [ type_ "button"
     , value "Login"
     , onClick (LandingPageMsg LoginRequested) ]
-    [ ] ]
+    [] ]
 
 solarSystemView: Model -> Html Msg
-solarSystemView model =
-  div
-    [ class "flex-box" ]
-    [ div 
-      [ class "panel glow full" ] 
-      [ text "Solar System - Coming soon" ]
-    , solarSystemMapView model
-    , solarSystemElementView model ]
+solarSystemView model = case model of
+    SolarSystemModel content -> case content.solarSystem of
+      Just solarSystem -> div
+        [ class "flex-box" ]
+        [ div 
+          [ class "panel glow full" ] 
+          [ text ("Solar System - " ++ solarSystem.name) ]
+        , solarSystemMapView solarSystem
+        , solarSystemElementView solarSystem ]
+      Nothing -> div [] []
+    _ -> div [] []
 
-solarSystemMapView: Model -> Html Msg
-solarSystemMapView model = 
+solarSystemMapView: SolarSystem -> Html Msg
+solarSystemMapView solarSystem = 
   div 
-    [ class "panel glow half" ] 
-    [ canvas [ class "half-square" ] [] ]
+    [ class "half-square" ] 
+    ( map planetView solarSystem.planets )
 
-solarSystemElementView: Model -> Html Msg
+planetView: Planet -> Html Msg
+planetView planet = img 
+  [ class "planet"
+  , style "top" ((String.fromInt planet.position.top) ++ "vmax")
+  , style "left" ((String.fromInt planet.position.left) ++ "vmax") 
+  , src planet.image ] 
+  []
+
+solarSystemElementView: SolarSystem -> Html Msg
 solarSystemElementView model = 
   div 
     [ class "panel glow half" ] 
